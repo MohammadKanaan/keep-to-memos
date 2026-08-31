@@ -1,0 +1,62 @@
+[project]
+name = "keep-to-memos"
+dynamic = ["version"]
+description = "Import a Google Keep Takeout export into a Memos instance through its HTTP API."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Mohammad Kanaan", email = "mohammadkanaan.me@gmail.com" }]
+requires-python = ">=3.10"
+keywords = ["google-keep", "memos", "takeout", "migration", "notes"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Utilities",
+]
+# Runtime is stdlib-only by design; nothing to declare here.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/MohammadKanaan/keep-to-memos"
+Repository = "https://github.com/MohammadKanaan/keep-to-memos"
+Issues = "https://github.com/MohammadKanaan/keep-to-memos/issues"
+Changelog = "https://github.com/MohammadKanaan/keep-to-memos/releases"
+
+[project.scripts]
+keep-to-memos = "keep_to_memos.__main__:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+    "twine>=6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "keep_to_memos/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["keep_to_memos"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["live"]
