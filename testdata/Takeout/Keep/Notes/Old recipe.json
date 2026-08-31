@@ -1,0 +1,11 @@
+{
+  "color": "YELLOW",
+  "isTrashed": false,
+  "isPinned": false,
+  "isArchived": true,
+  "textContent": "2 cups flour, 1 tsp salt, water.",
+  "title": "Old recipe",
+  "userEditedTimestampUsec": 1300000100000000,
+  "createdTimestampUsec": 1300000000000000,
+  "labels": [{"name": "cooking"}]
+}

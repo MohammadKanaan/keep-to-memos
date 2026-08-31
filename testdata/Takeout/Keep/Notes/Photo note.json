@@ -1,0 +1,11 @@
+{
+  "color": "DEFAULT",
+  "isTrashed": false,
+  "isPinned": false,
+  "isArchived": false,
+  "textContent": "Whiteboard from standup",
+  "title": "Photo note",
+  "userEditedTimestampUsec": 1500000050000000,
+  "createdTimestampUsec": 1500000000000000,
+  "labels": [{"name": "work"}]
+}

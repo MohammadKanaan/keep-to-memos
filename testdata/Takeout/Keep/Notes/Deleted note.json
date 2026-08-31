@@ -1,0 +1,10 @@
+{
+  "color": "DEFAULT",
+  "isTrashed": true,
+  "isPinned": false,
+  "isArchived": false,
+  "textContent": "should not be imported",
+  "title": "Deleted note",
+  "userEditedTimestampUsec": 1200000000000000,
+  "createdTimestampUsec": 1200000000000000
+}
