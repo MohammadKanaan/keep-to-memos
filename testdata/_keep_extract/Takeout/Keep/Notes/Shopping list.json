@@ -1,0 +1,11 @@
+{
+  "title": "Shopping list",
+  "textContent": "- milk\n- eggs\n- bread",
+  "labels": ["errands", "groceries"],
+  "color": "BLUE",
+  "isPinned": true,
+  "isArchived": false,
+  "isTrashed": false,
+  "createdTimestampUsec": 1600000000000000,
+  "userEditedTimestampUsec": 1610000000000000
+}
