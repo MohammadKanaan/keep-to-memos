@@ -11,6 +11,7 @@ dist/
 # Test artifacts
 .pytest_cache/
 .ruff_cache/
+_keep_extract/
 
 # macOS
 .DS_Store
