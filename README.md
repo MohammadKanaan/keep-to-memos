@@ -18,8 +18,10 @@ uvx --from keep-to-memos keep-to-memos \
 ```
 
 `MEMOS_URL` and `MEMOS_TOKEN` replace the flags, keeping the token out of shell
-history. `--url` defaults to `http://localhost:5230`. For a permanent install,
-use `uv tool install keep-to-memos` or `pipx install keep-to-memos`.
+history. `--url` defaults to `http://localhost:5230`. Run from a terminal and
+anything missing — the source path, URL, or token — is prompted for (the token
+hidden); non-interactive runs still fail fast. For a permanent install, use
+`uv tool install keep-to-memos` or `pipx install keep-to-memos`.
 
 `--dry-run` prints what would be imported and needs no token or server.
 `--include-trashed` includes trashed notes, which are skipped by default.
