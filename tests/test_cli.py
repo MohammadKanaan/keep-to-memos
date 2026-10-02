@@ -40,6 +40,18 @@ class TestArgs:
 
 
 class TestDryRun:
+    def test_dry_run_without_token_stays_offline(self, takeout_dir, capsys, monkeypatch):
+        # No token, no server: dry-run must still parse and print.
+        def boom(self):
+            raise AssertionError("whoami must not be called without a token")
+
+        monkeypatch.setattr(MemosClient, "whoami", boom)
+        rc = main(["--dry-run", str(takeout_dir)])
+        out = capsys.readouterr().out
+        assert rc == 0
+        assert out.count("DRY-RUN") == 5
+        assert "skipping connection check" in out
+
     def test_dry_run_needs_no_server(self, takeout_dir, capsys, monkeypatch):
         # whoami fails (no server) but dry-run proceeds anyway.
         from keep_to_memos.client import MemosError

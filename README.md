@@ -21,9 +21,10 @@ uvx --from keep-to-memos keep-to-memos \
 history. `--url` defaults to `http://localhost:5230`. For a permanent install,
 use `uv tool install keep-to-memos` or `pipx install keep-to-memos`.
 
-`--dry-run` prints what would be imported. `--include-trashed` includes trashed
-notes, which are skipped by default. `--no-throttle` skips the 0.5s pause
-between writes, for instances on non-SQLite backends (Postgres/MySQL).
+`--dry-run` prints what would be imported and needs no token or server.
+`--include-trashed` includes trashed notes, which are skipped by default.
+`--no-throttle` skips the 0.5s pause between writes, for instances on
+non-SQLite backends (Postgres/MySQL).
 
 ## What it imports
 

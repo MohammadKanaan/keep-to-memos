@@ -56,7 +56,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     args = p.parse_args(argv)
 
-    if not args.token:
+    if not args.dry_run and not args.token:
         p.error("--token is required (or set MEMOS_TOKEN)")
 
     src = args.source.expanduser().resolve()
@@ -65,20 +65,27 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     client = MemosClient(
         args.url,
-        args.token,
+        args.token or "",
         dry_run=args.dry_run,
         write_delay=0.0 if args.no_throttle else DEFAULT_WRITE_DELAY,
     )
 
-    try:
-        me = client.whoami()
-        print(f"Connected to {args.url} as {me.get('displayName') or me.get('username') or '?'}")
-    except MemosError as e:
-        if args.dry_run:
-            print(f" (dry-run: skipping connection check: {e})")
-        else:
-            print(str(e), file=sys.stderr)
-            return 1
+    if args.dry_run and not args.token:
+        # Nothing to import and no credentials: stay fully offline.
+        print("(dry-run: no token, skipping connection check)")
+    else:
+        try:
+            me = client.whoami()
+            print(
+                f"Connected to {args.url} as "
+                f"{me.get('displayName') or me.get('username') or '?'}"
+            )
+        except MemosError as e:
+            if args.dry_run:
+                print(f" (dry-run: skipping connection check: {e})")
+            else:
+                print(str(e), file=sys.stderr)
+                return 1
 
     try:
         with load_takeout(src) as notes:
