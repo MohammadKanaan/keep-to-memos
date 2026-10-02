@@ -20,7 +20,8 @@ Run both before opening a pull request. If you change CLI behavior, also
 verify `uv run keep-to-memos --help`.
 
 The live validation scripts in `tests/live/` run against a real memos
-instance, see the README for setup.
+instance; each script's docstring documents the environment variables it reads
+(`MEMOS_URL`, `MEMOS_USER`, `MEMOS_PASSWORD`).
 
 ## Pull Requests
 
