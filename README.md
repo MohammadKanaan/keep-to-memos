@@ -7,26 +7,32 @@ Moves a [Google Keep](https://keep.google.com) Takeout export into a
 
 ## Usage
 
-Download a Keep export from https://takeout.google.com and create a personal
-access token in Memos (Settings -> Access Tokens), then:
+1. Download a Takeout export from https://takeout.google.com.
+2. Create a personal access token in Memos under Settings -> Access Tokens.
+
+Then run the importer:
 
 ```bash
 uvx --from keep-to-memos keep-to-memos \
   --url https://your-memos-instance \
   --token memos_pat_... \
-  /path/to/takeout-*.zip     # or the unpacked Takeout/Keep folder
+  /path/to/takeout-*.zip
 ```
 
-`MEMOS_URL` and `MEMOS_TOKEN` replace the flags, keeping the token out of shell
-history. `--url` defaults to `http://localhost:5230`. Run from a terminal and
-anything missing — the source path, URL, or token — is prompted for (the token
-hidden); non-interactive runs still fail fast. For a permanent install, use
+The source argument takes the zip or an unpacked `Takeout/Keep` folder. Set
+`MEMOS_URL` and `MEMOS_TOKEN` instead of the flags to keep the token out of your
+shell history. `--url` defaults to `http://localhost:5230`.
+
+Run from a terminal and the importer prompts for whatever is missing, with the
+token hidden. Non-interactive runs fail fast. To install permanently, use
 `uv tool install keep-to-memos` or `pipx install keep-to-memos`.
 
-`--dry-run` prints what would be imported and needs no token or server.
-`--include-trashed` includes trashed notes, which are skipped by default.
-`--no-throttle` skips the 0.5s pause between writes, for instances on
-non-SQLite backends (Postgres/MySQL).
+Flags:
+
+- `--dry-run` prints what would be imported. Needs no token or server.
+- `--include-trashed` also imports trashed notes. Off by default.
+- `--no-throttle` skips the 0.5s pause between writes. Only safe on Postgres or
+  MySQL; SQLite returns `SQLITE_BUSY` under back-to-back writes.
 
 ## What it imports
 
