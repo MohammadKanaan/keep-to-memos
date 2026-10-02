@@ -24,20 +24,24 @@ class MemosError(Exception):
     """An API request failed (non-retryable, or retries exhausted)."""
 
 
+# Brief pause between sequential writes: memos' SQLite write path can return
+# SQLITE_BUSY when requests arrive back-to-back. Non-SQLite backends
+# (Postgres/MySQL) don't need it; the CLI exposes --no-throttle for those.
+DEFAULT_WRITE_DELAY = 0.5
+
+
 class MemosClient:
     def __init__(
         self,
         url: str,
         token: str,
         dry_run: bool = False,
-        write_delay: float = 0.5,
+        write_delay: float = DEFAULT_WRITE_DELAY,
         timeout: float = 30.0,
     ) -> None:
         self.url = url.rstrip("/")
         self.token = token
         self.dry_run = dry_run
-        # Brief pause between sequential writes: memos' SQLite write path can
-        # return SQLITE_BUSY when requests arrive back-to-back.
         self.write_delay = write_delay
         self.timeout = timeout
         self._last_write = 0.0

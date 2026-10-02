@@ -82,6 +82,33 @@ class TestDryRun:
         assert "HTTP 500: busy" in capsys.readouterr().err
 
 
+class TestThrottleFlag:
+    @staticmethod
+    def _capture_client(monkeypatch):
+        captured = {}
+
+        class CapturingClient(MemosClient):
+            def __init__(self, *args, **kwargs):
+                captured.update(kwargs)
+                super().__init__(*args, **kwargs)
+
+            def whoami(self):
+                return {}
+
+        monkeypatch.setattr("keep_to_memos.__main__.MemosClient", CapturingClient)
+        return captured
+
+    def test_throttle_on_by_default(self, takeout_dir, monkeypatch):
+        captured = self._capture_client(monkeypatch)
+        assert main(["--dry-run", "--token", "t", str(takeout_dir)]) == 0
+        assert captured["write_delay"] == 0.5
+
+    def test_no_throttle_disables_delay(self, takeout_dir, monkeypatch):
+        captured = self._capture_client(monkeypatch)
+        assert main(["--dry-run", "--no-throttle", "--token", "t", str(takeout_dir)]) == 0
+        assert captured["write_delay"] == 0.0
+
+
 class TestZipInput:
     def test_zip_dry_run(self, takeout_zip, capsys, monkeypatch):
         monkeypatch.setattr(MemosClient, "whoami", lambda self: {})

@@ -20,7 +20,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from keep_to_memos import __version__
-from keep_to_memos.client import MemosClient, MemosError
+from keep_to_memos.client import DEFAULT_WRITE_DELAY, MemosClient, MemosError
 from keep_to_memos.keep import TakeoutError, load_takeout
 from keep_to_memos.migrate import migrate
 
@@ -47,6 +47,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--dry-run", action="store_true", help="Parse and print without writing to memos"
     )
     p.add_argument("--include-trashed", action="store_true", help="Also import trashed notes")
+    p.add_argument(
+        "--no-throttle",
+        action="store_true",
+        help="Skip the 0.5s pause between writes (safe on non-SQLite backends "
+        "like Postgres/MySQL)",
+    )
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     args = p.parse_args(argv)
 
@@ -57,7 +63,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not src.exists():
         p.error(f"source path does not exist: {src}")
 
-    client = MemosClient(args.url, args.token, dry_run=args.dry_run)
+    client = MemosClient(
+        args.url,
+        args.token,
+        dry_run=args.dry_run,
+        write_delay=0.0 if args.no_throttle else DEFAULT_WRITE_DELAY,
+    )
 
     try:
         me = client.whoami()
