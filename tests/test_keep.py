@@ -86,6 +86,19 @@ class TestParseKeepNote:
         note = parse_keep_note(tmp_path / "Note.json")
         assert [a.name for a in note.attachments] == ["Note extra.jpg", "Note.png"]
 
+    def test_attachments_not_stolen_by_prefix_note(self, tmp_path):
+        # With notes "2019" and "2019 trip", "2019 trip.png" belongs to the
+        # longer note only — the old startswith() match also claimed it
+        # for "2019.json".
+        (tmp_path / "2019.json").write_text("{}", encoding="utf-8")
+        (tmp_path / "2019 trip.json").write_text("{}", encoding="utf-8")
+        (tmp_path / "2019.png").write_bytes(b"\x89PNG")
+        (tmp_path / "2019 trip.png").write_bytes(b"\x89PNG")
+        assert [a.name for a in parse_keep_note(tmp_path / "2019.json").attachments] == ["2019.png"]
+        assert [a.name for a in parse_keep_note(tmp_path / "2019 trip.json").attachments] == [
+            "2019 trip.png"
+        ]
+
     def test_html_preview_not_an_attachment(self, tmp_path):
         # Google ships a .html preview next to every note JSON; it must not
         # be picked up as an attachment by the stem fallback.

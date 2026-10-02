@@ -64,6 +64,23 @@ class TestDryRun:
         assert rc == 1
         assert "cannot reach memos" in capsys.readouterr().err
 
+    def test_idempotency_check_failure_exits_cleanly(
+        self, takeout_dir, monkeypatch, capsys
+    ):
+        # migrate() re-raises MemosError when the idempotency GET fails
+        # with something other than "not found" (e.g. a persistent 500).
+        # The CLI must exit 1 with a message, not a traceback.
+        from keep_to_memos.client import MemosError
+
+        def boom(self, memo_name):
+            raise MemosError(f"GET /api/v1/{memo_name} -> HTTP 500: busy")
+
+        monkeypatch.setattr(MemosClient, "whoami", lambda self: {})
+        monkeypatch.setattr(MemosClient, "get_memo", boom)
+        rc = main(["--token", "t", str(takeout_dir)])
+        assert rc == 1
+        assert "HTTP 500: busy" in capsys.readouterr().err
+
 
 class TestZipInput:
     def test_zip_dry_run(self, takeout_zip, capsys, monkeypatch):

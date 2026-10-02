@@ -117,7 +117,9 @@ def _is_inside(parent: Path, child: Path) -> bool:
 def _collect_attachments(json_path: Path, raw: dict[str, Any]) -> list[Path]:
     """Modern exports list attachments in the JSON (`attachments[].filePath`,
     relative to the Keep dir). Legacy exports name media after the note and
-    place it next to the JSON; match loosely by stem. Prefer the JSON list.
+    place it next to the JSON; match by stem prefix, but a media file belongs
+    to the note with the longest matching stem, so `Note trip.png` is not
+    also claimed by `Note.json`. Prefer the JSON list.
     `.html` files are the per-note preview export Google ships next to every
     JSON, never Keep attachments, so the stem fallback skips them.
     """
@@ -146,8 +148,16 @@ def _collect_attachments(json_path: Path, raw: dict[str, Any]) -> list[Path]:
                 continue
             attachments.append(candidate)
     else:
+        stems: set[str] = set()
+        media: list[Path] = []
         for f in keep_dir.iterdir():
-            if f.suffix.lower() not in (".json", ".html") and f.stem.startswith(json_path.stem):
+            if f.suffix.lower() == ".json":
+                stems.add(f.stem)
+            elif f.suffix.lower() != ".html":
+                media.append(f)
+        for f in media:
+            owner = max((s for s in stems if f.stem.startswith(s)), key=len, default=None)
+            if owner == json_path.stem:
                 attachments.append(f)
     attachments.sort()
     return attachments

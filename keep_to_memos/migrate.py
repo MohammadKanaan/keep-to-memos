@@ -51,8 +51,14 @@ def migrate(client: MemosClient, notes: list[KeepNote], skip_trashed: bool = Tru
                 print(f"[{idx}/{total}] NOTE: removing incomplete memo from a failed run: {desc}")
                 client.delete_memo(existing["name"])
         except MemosError as e:
-            if "not found" not in str(e).lower():
-                raise
+            if "not found" in str(e).lower():
+                pass  # not imported yet — proceed to create
+            else:
+                # Can't tell whether it's already imported; do not create
+                # (that could duplicate) — count it failed and move on.
+                print(f"[{idx}/{total}] FAIL: {desc}: {e}", file=sys.stderr)
+                failed += 1
+                continue
         memo_name = None
         try:
             # 1. Create the memo first so attachments can be bound to it.

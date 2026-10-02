@@ -180,6 +180,26 @@ class TestIdempotency:
         assert not [ln for ln in out.splitlines() if "] OK:" in ln]
         assert len([ln for ln in out.splitlines() if "SKIP (already imported" in ln]) == 5
 
+    def test_failed_idempotency_check_fails_note_not_run(self, takeout_notes):
+        # A GET error other than "not found" (e.g. persistent 500) must not
+        # abort the whole run or risk a duplicate: the note counts as failed,
+        # the others still import.
+        client = FakeMemosClient()
+        real_get = client.get_memo
+        calls = {"n": 0}
+
+        def flaky_get(memo_name):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise MemosError("GET /api/v1/memos/x -> HTTP 500: busy")
+            return real_get(memo_name)
+
+        client.get_memo = flaky_get
+        rc = migrate(client, takeout_notes)
+        assert rc == 1
+        # The first-checked note was skipped as failed; the other four imported.
+        assert len(client.memos) == 4
+
     def test_orphan_from_failed_run_reimported(self, takeout_notes, capsys):
         # A memo with empty content is the orphan of a previously failed run.
         client = FakeMemosClient()

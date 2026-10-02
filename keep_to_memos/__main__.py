@@ -78,6 +78,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     except TakeoutError as e:
         print(str(e), file=sys.stderr)
         return 2
+    except MemosError as e:
+        # migrate() treats per-note failures as non-fatal, but any MemosError
+        # that escapes it (or the connection check) should be a clean error,
+        # not a traceback.
+        print(str(e), file=sys.stderr)
+        return 1
     except KeyboardInterrupt:
         print("Interrupted.", file=sys.stderr)
         return 130

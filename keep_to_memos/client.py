@@ -70,9 +70,11 @@ class MemosClient:
             except urllib.error.HTTPError as e:
                 detail = e.read().decode("utf-8", "replace")
                 try:
-                    detail = json.loads(detail).get("message", detail)
+                    parsed = json.loads(detail)
                 except json.JSONDecodeError:
-                    pass
+                    parsed = None
+                if isinstance(parsed, dict):
+                    detail = parsed.get("message", detail)
                 if e.code >= 500 and attempt < retries:
                     time.sleep(1.5 * (attempt + 1))
                     continue

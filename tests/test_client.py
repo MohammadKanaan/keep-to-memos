@@ -93,6 +93,16 @@ class TestRequestBasics:
         with pytest.raises(MemosError, match="HTTP 400: boom"):
             _make_client()._request("GET", "/api/v1/auth/me")
 
+    def test_http_error_with_non_object_json_body(self, monkeypatch):
+        # A plain-string JSON error body (e.g. `"unavailable"`) must not
+        # crash the error handler with AttributeError.
+        def fake_urlopen(req, timeout=None):
+            raise _http_error(req, 400, json.dumps("unavailable").encode())
+
+        monkeypatch.setattr(client_mod.urllib.request, "urlopen", fake_urlopen)
+        with pytest.raises(MemosError, match="HTTP 400"):
+            _make_client()._request("GET", "/api/v1/auth/me")
+
     def test_urlopen_uses_timeout(self, monkeypatch):
         rec = _Recorder(["{}"])
         monkeypatch.setattr(client_mod.urllib.request, "urlopen", rec)
