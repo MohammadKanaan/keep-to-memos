@@ -15,4 +15,4 @@ I will acknowledge valid reports as quickly as possible and coordinate a fix bef
 
 ## Supported Versions
 
-Security fixes are best-effort and prioritized for the latest release on the `master` branch.
+Security fixes are best-effort and prioritized for the latest release on the `main` branch.

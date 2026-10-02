@@ -7,7 +7,7 @@ Publishing.
 
 The GitHub repo starts private. Before tagging `v1.0.0`:
 
-1. Push `master`.
+1. Push `main`.
 2. Make the repository public.
 3. Set the description to "Import a Google Keep Takeout export into a Memos instance"
    and topics `google-keep`, `memos`, `takeout`, `migration`, `python`.
